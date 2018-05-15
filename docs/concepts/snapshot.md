@@ -141,6 +141,7 @@ Now, you can create a Snapshot object using this secret. Following parameters ar
 | `spec.s3.endpoint`       | `Required`. For S3, use `s3.amazonaws.com`. If your bucket is in a different location, S3 server (s3.amazonaws.com) will redirect snapshot to the correct endpoint. For an S3-compatible server that is not Amazon (like Minio), or is only available via HTTP, you can specify the endpoint like this: `http://server:port`. |
 | `spec.s3.bucket`         | `Required`. Name of Bucket                                                      |
 | `spec.s3.prefix`         | `Optional`. Path prefix into bucket where snapshot will be store                |
+| `spec.s3.region`         | `Optional`. Region of the bucket, where snapshot will be stored                 |
 | `spec.resources`         | `Optional`. Compute resources required by Jobs used to take snapshot or initialize databases from snapshot.  To learn more, visit [here](http://kubernetes.io/docs/user-guide/compute-resources/). |
 
 ```console
@@ -177,6 +178,43 @@ spec:
       memory: "128Mi"
       cpu: "500m"
 ```
+
+#### Use IAM credential
+
+If your Kubernetes custer is in AWS and you want to take backup into S3, you can use default IAM user credential to take backup.
+
+In this case, you do not need to provide storage secret `spec.storageSecretName`, but you need to provide `spec.s3.region`, its a required field.
+
+```console
+$ kubectl create -f ./docs/examples/snapshot/s3/s3-snapshot-iam.yaml
+snapshot "s3-snapshot-iam" created
+```
+
+```yaml
+$ kubectl get snapshot s3-snapshot-iam -o yaml
+
+apiVersion: kubedb.com/v1alpha1
+kind: Snapshot
+metadata:
+  name: s3-snapshot-iam
+  labels:
+    kubedb.com/kind: Postgres
+spec:
+  databaseName: postgres-db
+  s3:
+    bucket: kubedb-qa
+    prefix: demo
+    region: 'us-west-1'
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "250m"
+    limits:
+      memory: "128Mi"
+      cpu: "500m"
+```
+
+> Note: Both Kubernetes cluster and S3 bucket should have same IAM user permission.
 
 ### Google Cloud Storage (GCS)
 
@@ -257,6 +295,45 @@ spec:
       memory: "128Mi"
       cpu: "500m"
 ```
+
+#### Use IAM credential
+
+If your Kubernetes custer is in Google Cloud and you want to take backup into GCS, you can use default IAM user credential to take backup.
+
+In this case, you do not need to provide storage secret `spec.storageSecretName`.
+
+```console
+$ kubectl create -f ./docs/examples/snapshot/gcs/gcs-snapshot-iam.yaml
+snapshot "gcs-snapshot-iam" created
+```
+
+```bash
+$ kubectl get snapshot gcs-snapshot-iam -o yaml
+```
+
+```yaml
+apiVersion: kubedb.com/v1alpha1
+kind: Snapshot
+metadata:
+  name: gcs-snapshot-iam
+  labels:
+    kubedb.com/kind: Postgres
+spec:
+  databaseName: postgres-db
+  gcs:
+    bucket: bucket-for-snapshot
+    prefix: demo
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "250m"
+    limits:
+      memory: "128Mi"
+      cpu: "500m"
+
+```
+
+> Note: Both Kubernetes cluster and GCS bucket should have same IAM user permission.
 
 ### Microsoft Azure Storage
 

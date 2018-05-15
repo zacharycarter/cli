@@ -1,15 +1,13 @@
 apiVersion: kubedb.com/v1alpha1
 kind: Snapshot
 metadata:
-  name: s3-snapshot
+  name: gcs-snapshot-iam
   labels:
     kubedb.com/kind: Postgres
 spec:
   databaseName: postgres-db
-  storageSecretName: s3-secret
-  s3:
-    endpoint: 's3.amazonaws.com'
-    bucket: kubedb-qa
+  gcs:
+    bucket: bucket-for-snapshot
     prefix: demo
   resources:
     requests:
