@@ -30,7 +30,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/yaml"
 	"k8s.io/kubernetes/pkg/kubectl/cmd/templates"
 	cmdutil "k8s.io/kubernetes/pkg/kubectl/cmd/util"
-	"k8s.io/kubernetes/pkg/kubectl/resource"
+	"k8s.io/kubernetes/pkg/kubectl/genericclioptions/resource"
 	"k8s.io/kubernetes/pkg/printers"
 )
 
@@ -225,7 +225,7 @@ func visitToPatch(
 		return err
 	}
 
-	restClonfig, err := f.ClientConfig()
+	restClonfig, err := f.ToRESTConfig()
 	if err != nil {
 		return err
 	}

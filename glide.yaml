@@ -21,27 +21,29 @@ import:
 - package: github.com/kubedb/memcached
   version: master
 - package: github.com/spf13/cobra
-  version: master
+  version: v0.0.3
 - package: github.com/spf13/pflag
-  version: master
+  version: v1.0.1
 - package: github.com/yudai/gojsondiff
   version: 1.0.0
 - package: k8s.io/api
-  version: kubernetes-1.10.0
+  version: kubernetes-1.11.0
 - package: k8s.io/apimachinery
-  version: kubernetes-1.10.0
+  repo: https://github.com/pharmer/apimachinery.git
+  vcs: git
+  version: release-1.11
 - package: k8s.io/client-go
-  version: v7.0.0
+  version: v8.0.0
 - package: k8s.io/apiextensions-apiserver
-  version: kubernetes-1.10.0
+  version: kubernetes-1.11.0
 - package: k8s.io/kubernetes
-  version: v1.10.0
+  version: v1.11.0
 - package: github.com/appscode/kutil
-  version: release-7.0
+  version: release-8.0
 - package: github.com/appscode/kube-mon
-  version: release-7.0
+  version: release-8.0
 - package: k8s.io/metrics
-  version: kubernetes-1.10.0
+  version: kubernetes-1.11.0
 - package: github.com/graymeta/stow
   repo: https://github.com/appscode/stow.git
   vcs: git
@@ -49,14 +51,10 @@ import:
 - package: github.com/aws/aws-sdk-go/aws
   version: v1.12.7
 - package: github.com/Azure/azure-sdk-for-go
-  version: v10.2.1-beta
+  version: v14.6.0
 - package: github.com/Azure/go-autorest
-  version: ~8.1.1
+  version: v10.6.2
 - package: github.com/Azure/go-ansiterm
   version: 19f72df4d05d31cbe1c56bfc8045c96babff6c7e
 - package: golang.org/x/sys
-  version: 7ddbeae9ae08c6a06a59597f0c9edbc5ff2444ce
-- package: github.com/hashicorp/go-version
-  repo: https://github.com/appscode/go-version.git
-  vcs: git
-  version: master
+  version: 95c6576299259db960f6c5b9b69ea52422860fce

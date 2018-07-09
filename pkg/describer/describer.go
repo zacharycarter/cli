@@ -35,7 +35,7 @@ type humanReadableDescriber struct {
 }
 
 func newHumanReadableDescriber(f cmdutil.Factory) *humanReadableDescriber {
-	restClonfig, _ := f.ClientConfig()
+	restClonfig, _ := f.ToRESTConfig()
 	describer := &humanReadableDescriber{
 		Factory:          f,
 		extensionsClient: tcs.NewForConfigOrDie(restClonfig),

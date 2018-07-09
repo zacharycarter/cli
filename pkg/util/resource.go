@@ -129,7 +129,6 @@ func CheckSupportedResource(kind string) error {
 }
 
 func GetAllSupportedResources(f cmdutil.Factory) ([]string, error) {
-
 	resources := []string{
 		tapi.ResourcePluralElasticsearch + "." + tapi.SchemeGroupVersion.Group,
 		tapi.ResourcePluralPostgres + "." + tapi.SchemeGroupVersion.Group,
@@ -141,7 +140,7 @@ func GetAllSupportedResources(f cmdutil.Factory) ([]string, error) {
 		tapi.ResourcePluralDormantDatabase + "." + tapi.SchemeGroupVersion.Group,
 	}
 
-	restConfig, err := f.ClientConfig()
+	restConfig, err := f.ToRESTConfig()
 	if err != nil {
 		return nil, err
 	}

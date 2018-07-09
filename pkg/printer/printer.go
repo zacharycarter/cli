@@ -4,10 +4,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/kubernetes/scheme"
 	cmdutil "k8s.io/kubernetes/pkg/kubectl/cmd/util"
-	"k8s.io/kubernetes/pkg/printers"
+	"k8s.io/kubernetes/pkg/kubectl/genericclioptions/printers"
 )
 
 // ref: k8s.io/kubernetes/pkg/kubectl/resource_printer.go
@@ -19,14 +17,14 @@ type DescriberSettings struct {
 }
 
 func NewPrinter(cmd *cobra.Command) (printers.ResourcePrinter, error) {
+	format := cmdutil.GetFlagString(cmd, "output")
+
 	humanReadablePrinter := NewHumanReadablePrinter(PrintOptions{
 		WithNamespace: cmdutil.GetFlagBool(cmd, "all-namespaces"),
-		Wide:          cmdutil.GetWideFlag(cmd),
+		Wide:          format == "wide",
 		ShowAll:       cmdutil.GetFlagBool(cmd, "show-all"),
 		ShowLabels:    cmdutil.GetFlagBool(cmd, "show-labels"),
 	})
-
-	format := cmdutil.GetFlagString(cmd, "output")
 
 	switch format {
 	case "json":
@@ -35,8 +33,7 @@ func NewPrinter(cmd *cobra.Command) (printers.ResourcePrinter, error) {
 		return &printers.YAMLPrinter{}, nil
 	case "name":
 		return &printers.NamePrinter{
-			Typer:    scheme.Scheme,
-			Decoders: []runtime.Decoder{scheme.Codecs.UniversalDecoder()},
+			ShortOutput: true,
 		}, nil
 	case "wide":
 		fallthrough

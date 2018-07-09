@@ -2,17 +2,22 @@ package kube
 
 import (
 	"fmt"
+	"os"
+	"time"
 
 	"github.com/spf13/cobra"
+	"k8s.io/apimachinery/pkg/api/meta"
+	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/restmapper"
 	"k8s.io/client-go/tools/clientcmd"
 	cmdutil "k8s.io/kubernetes/pkg/kubectl/cmd/util"
 )
 
 func NewKubeFactory(cmd *cobra.Command) cmdutil.Factory {
 	context := cmdutil.GetFlagString(cmd, "kube-context")
-	config := configForContext(context)
-	return cmdutil.NewFactory(config)
+	return cmdutil.NewFactory(&restClientGetter{configForContext(context)})
 }
 
 func NewKubeClient(cmd *cobra.Command) (kubernetes.Interface, error) {
@@ -43,4 +48,32 @@ func configForContext(context string) clientcmd.ClientConfig {
 		overrides.CurrentContext = context
 	}
 	return clientcmd.NewNonInteractiveDeferredLoadingClientConfig(rules, overrides)
+}
+
+type restClientGetter struct {
+	config clientcmd.ClientConfig
+}
+
+func (r *restClientGetter) ToRESTConfig() (*rest.Config, error) {
+	return r.ToRawKubeConfigLoader().ClientConfig()
+}
+
+func (r *restClientGetter) ToDiscoveryClient() (discovery.CachedDiscoveryInterface, error) {
+	config, err := r.ToRESTConfig()
+	if err != nil {
+		return nil, err
+	}
+	return discovery.NewCachedDiscoveryClientForConfig(config, os.TempDir(), "", 10*time.Minute)
+}
+
+func (r *restClientGetter) ToRESTMapper() (meta.RESTMapper, error) {
+	client, err := r.ToDiscoveryClient()
+	if err != nil {
+		return nil, err
+	}
+	return restmapper.NewDeferredDiscoveryRESTMapper(client), nil
+}
+
+func (r *restClientGetter) ToRawKubeConfigLoader() clientcmd.ClientConfig {
+	return r.config
 }
